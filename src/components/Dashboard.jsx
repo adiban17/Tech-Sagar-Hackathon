@@ -17,7 +17,8 @@ const Dashboard = () => {
     totalScans: 0,
     fraudDetected: 0,
     accuracyRate: "0%",
-    f1Score: "0"
+    f1Score: "0",
+    shapData: []
   });
 
   const handleDragOver = (e) => {
@@ -104,7 +105,8 @@ const Dashboard = () => {
         totalScans: data.metrics.total_samples !== undefined ? data.metrics.total_samples : uploadedData.totalRows,
         fraudDetected: data.metrics.fraud_predictions !== undefined ? data.metrics.fraud_predictions : 0,
         accuracyRate: data.metrics.accuracy !== undefined ? (data.metrics.accuracy * 100).toFixed(1) + "%" : "N/A",
-        f1Score: data.metrics.f1_score !== undefined ? data.metrics.f1_score.toFixed(3) : "N/A"
+        f1Score: data.metrics.f1_score !== undefined ? data.metrics.f1_score.toFixed(3) : "N/A",
+        shapData: data.metrics.shap_values || []
       };
 
       setMetrics(newMetrics);
@@ -433,7 +435,7 @@ const Dashboard = () => {
               <h2 className="text-xl font-semibold text-white mb-2">Data Analysis Results</h2>
               <p className="text-gray-400">Visualizations of your cleaned transaction data</p>
             </div>
-            <Visualizations data={cleanedData} />
+            <Visualizations data={cleanedData} metrics={metrics} />
           </motion.div>
         )}
       </main>

@@ -11,7 +11,7 @@ ChartJS.register(
   PointElement, LineElement, RadialLinearScale, Filler
 );
 
-const Visualizations = ({ data }) => {
+const Visualizations = ({ data, metrics }) => {
   // Filter out any trailing empty rows caused by CSV formatting
   const validData = useMemo(() => data?.filter(row => Object.keys(row).length > 2) || [], [data]);
   if (!validData || validData.length === 0) return null;
@@ -94,6 +94,32 @@ const Visualizations = ({ data }) => {
         { label: 'Safe Transactions', data: payKeys.map(k => safeCounts[k]), backgroundColor: '#10B981' },
         { label: 'Fraudulent', data: payKeys.map(k => fraudCounts[k]), backgroundColor: '#EF4444' }
       ]
+    };
+  };
+
+  const getShapChartData = () => {
+    if (!metrics?.shapData || metrics.shapData.length === 0) {
+      return {
+        labels: ['No SHAP data available'],
+        datasets: [{
+          label: 'Feature Importance',
+          data: [0],
+          backgroundColor: '#8B5CF6',
+          borderColor: 'rgba(139, 92, 246, 0.5)',
+          borderWidth: 1,
+        }]
+      };
+    }
+
+    return {
+      labels: metrics.shapData.map(item => item.feature),
+      datasets: [{
+        label: 'Feature Importance',
+        data: metrics.shapData.map(item => item.importance),
+        backgroundColor: '#8B5CF6',
+        borderColor: 'rgba(139, 92, 246, 0.5)',
+        borderWidth: 1,
+      }]
     };
   };
 
@@ -209,6 +235,29 @@ const Visualizations = ({ data }) => {
             <div className="mb-4 text-center"><h3 className="text-white font-semibold text-lg">Temporal Threat Radar</h3></div>
             <div className="w-full h-64">
               <Radar data={getHourlyRadar()} options={{ ...darkThemeOptions, scales: { r: { pointLabels: { color: '#9ca3af' }, ticks: { display: false } } } }} />
+            </div>
+          </div>
+
+          <div className="col-span-1 xl:col-span-2 bg-white/5 border border-white/10 p-6 rounded-xl backdrop-blur-md">
+            <div className="mb-4 text-center"><h3 className="text-white font-semibold text-lg">AI Decision Drivers (SHAP Global Feature Importance)</h3></div>
+            <div className="w-full h-64">
+              <Bar 
+                data={getShapChartData()} 
+                options={{
+                  ...darkThemeOptions,
+                  indexAxis: 'y',
+                  scales: {
+                    x: { 
+                      ticks: { color: '#9ca3af' },
+                      grid: { color: 'rgba(255,255,255,0.1)' }
+                    },
+                    y: { 
+                      ticks: { color: '#9ca3af' },
+                      grid: { display: false }
+                    }
+                  }
+                }} 
+              />
             </div>
           </div>
 

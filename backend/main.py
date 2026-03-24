@@ -16,7 +16,8 @@ app = FastAPI(title="Fraud Detection Data Cleaner API")
 # Crucial Step: Set up CORS so your React frontend can talk to this backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For the hackathon, "*" is fine. In production, lock this down to your frontend URL (e.g., localhost:5173)
+    # REPLACE the URL below with your actual Netlify URL!
+    allow_origins=["https://statuesque-tarsier-02266a.netlify.app"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
