@@ -18,10 +18,11 @@ app = FastAPI(title="Fraud Detection Data Cleaner API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173", # Standard Vite port
-        "http://localhost:5177", # The port in your error logs
+        "http://localhost:5173", 
+        "http://localhost:5177",
         "http://127.0.0.1:5173",
-        "http://127.0.0.1:5177"
+        "http://127.0.0.1:5177",
+        "*" # Add this temporarily to allow all traffic while setting up, OR add your live Railway frontend URL here once you have it
     ],
     allow_credentials=True,
     allow_methods=["*"],
