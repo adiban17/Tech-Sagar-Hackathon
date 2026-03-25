@@ -77,10 +77,10 @@ const Dashboard = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('https://prolific-reprieve-production-1577.up.railway.app/', {
-        method: 'POST',
-        body: formData
-      });
+      const response = await fetch('https://prolific-reprieve-production.up.railway.app/api/upload-csv', {
+  method: 'POST',
+  body: formData
+});
 
       if (!response.ok) {
         throw new Error('Analysis failed');
