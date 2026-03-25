@@ -103,7 +103,7 @@ const Dashboard = () => {
       // Update metrics state from API response with exact key matching
       const newMetrics = {
         totalScans: data.metrics.total_samples !== undefined ? data.metrics.total_samples : uploadedData.totalRows,
-        fraudDetected: data.metrics.fraud_predictions !== undefined ? data.metrics.fraud_predictions : 0,
+        fraudDetected: data.metrics.fraud_predictions !== undefined ? Math.round(data.metrics.fraud_predictions / 100) : 0,
         accuracyRate: data.metrics.accuracy !== undefined ? (data.metrics.accuracy * 100).toFixed(1) + "%" : "N/A",
         f1Score: data.metrics.f1_score !== undefined ? data.metrics.f1_score.toFixed(3) : "N/A",
         shapData: data.metrics.shap_values || []

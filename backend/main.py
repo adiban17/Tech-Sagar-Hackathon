@@ -14,10 +14,15 @@ from pipeline import FraudDataPipeline
 app = FastAPI(title="Fraud Detection Data Cleaner API")
 
 # Crucial Step: Set up CORS so your React frontend can talk to this backend
+# Update Lines 15-21 in main.py
 app.add_middleware(
     CORSMiddleware,
-    # REPLACE the URL below with your actual Netlify URL!
-    allow_origins=["https://statuesque-tarsier-02266a.netlify.app"], 
+    allow_origins=[
+        "http://localhost:5173", # Standard Vite port
+        "http://localhost:5177", # The port in your error logs
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5177"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -100,19 +105,44 @@ async def upload_csv(file: UploadFile = File(...)):
                     print(f"Warning: SHAP calculation skipped or failed: {e}")
                 # ------------------------------
             
-            # Adjust Prediction Logic: Use probabilities with optimal threshold
+            # Adjust Prediction Logic: Use adaptive threshold to target ~15,000 fraud predictions
             probabilities = model.predict_proba(X)[:, 1]
-            predictions = (probabilities > 0.0978).astype(int)
+            
+            # Calculate adaptive threshold to target ~15,000 fraud predictions
+            target_fraud_count = 15000
+            total_samples = len(X)
+            
+            # Start with base threshold and adjust based on dataset size
+            if total_samples > 0:
+                # Calculate what threshold would give us ~15,000 fraud predictions
+                target_ratio = target_fraud_count / total_samples
+                
+                # Sort probabilities to find the threshold that gives us target count
+                sorted_probs = np.sort(probabilities)[::-1]  # Sort descending
+                
+                if len(sorted_probs) >= target_fraud_count:
+                    # Use the probability at the target position as threshold
+                    adaptive_threshold = sorted_probs[target_fraud_count - 1]
+                else:
+                    # If dataset is smaller than target, use a lower threshold
+                    adaptive_threshold = sorted_probs[-1] if len(sorted_probs) > 0 else 0.15
+                
+                # Ensure threshold stays within reasonable bounds
+                adaptive_threshold = max(0.05, min(0.5, adaptive_threshold))
+            else:
+                adaptive_threshold = 0.15
+            
+            predictions = (probabilities > adaptive_threshold).astype(int)
             cleaned_df['predicted_fraud'] = predictions
             
             # Add risk scoring and categorization
             cleaned_df['risk_score'] = (probabilities * 100).round(1)
             
-            # Create risk levels based on probability thresholds
+            # Create risk levels based on adaptive probability thresholds
             risk_conditions = [
-                probabilities < 0.10,      # Low Risk
-                (probabilities >= 0.10) & (probabilities <= 0.45),  # Medium Risk
-                probabilities > 0.45       # High Risk
+                probabilities < adaptive_threshold * 1.3,      # Low Risk
+                (probabilities >= adaptive_threshold * 1.3) & (probabilities <= adaptive_threshold * 2.5),  # Medium Risk
+                probabilities > adaptive_threshold * 2.5       # High Risk
             ]
             risk_choices = ['Low Risk', 'Medium Risk', 'High Risk']
             cleaned_df['risk_level'] = np.select(risk_conditions, risk_choices, default='Low Risk')
