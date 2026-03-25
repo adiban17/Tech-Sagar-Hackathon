@@ -17,7 +17,11 @@ app = FastAPI(title="Fraud Detection Data Cleaner API")
 # Update Lines 15-21 in main.py
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # This single asterisk allows any frontend to talk to your API
+    allow_origins=[
+        "https://nexflow-transaction-fraud-detection-production.up.railway.app", # Your live frontend
+        "http://localhost:5173", # Keep this so your local environment still works
+        "http://127.0.0.1:5173"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
