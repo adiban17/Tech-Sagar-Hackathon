@@ -272,14 +272,37 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👥 Team
 
-- **Aditya Banerjee** - Lead Developer & Data Scientist
+- **Aditya Banerjee** — Lead Developer & Data Scientist  
+- **Aditya Radhakrishnan** — Machine Learning Engineer (Data Cleaning, Feature Engineering, Model Training)
 - Tech Sagar Hackathon 2026
+
+## Contribution (Aditya Radhakrishnan)
+
+### Machine Learning Pipeline
+- Performed data cleaning and handled missing/inconsistent values
+- Developed feature engineering pipeline to extract fraud-related patterns
+- Combined processed features with cleaned dataset for model input
+
+### Model Development
+- Built initial fraud detection model
+- Conducted training and basic evaluation
+- Prepared pipeline for backend integration
+
+### Files Added
+- 01_data_cleaning.ipynb
+- 02_feature_engineering.ipynb
+- 03_model_training.ipynb
 
 ## 📞 Contact
 
 - **GitHub**: @adiban17
 - **Email**: aditya.banerjee@example.com
 - **LinkedIn**: linkedin.com/in/adityabanerjee
+
+- 
+- **GitHub**: @codewithadityard
+- **Email**: adityard1608@gmail.com
+- **LinkedIn**: linkedin.com/in/adityard
 
 ## 🙏 Acknowledgments
 
